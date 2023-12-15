@@ -18,6 +18,7 @@
 ## Статьи
 - [Как описать архитектуру продукта по нотации C4](https://habr.com/ru/articles/565658/)
 - [Как описать большую систему в нотации С4](https://habr.com/ru/companies/nspk/articles/679426/)
+- [Визуализация архитектуры с помощью C4 модели и PlantUML](https://habr.com/ru/companies/usetech/news/676196/)
 - [Что такое Serverless Архитектура и в чём её преимущества?](https://mkdev.me/ru/posts/chto-takoe-serverless-arhitektura-i-v-chyom-eyo-preimuschestva)
 - [Структуры данных](https://testengineer.ru/strukturi-dannih-gaid/)
 -[Сервис-ориентированная архитектура (SOA)](https://habr.com/ru/companies/vk/articles/342526/)
