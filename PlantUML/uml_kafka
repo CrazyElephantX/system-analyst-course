@@ -1,0 +1,49 @@
+@startuml view-accounts-consume-fccs-movements
+
+autonumber "<b>[00]"
+skinparam maxMessageSize 250
+
+participant "система банка" as FCCS
+queue "[Apache Kafka]" as Kafka
+box "ещё система"
+    participant "backend" as accounts
+    database "PostgreSQL" as DB
+end box
+
+FCCS -> Kafka : Полупроводка
+Kafka -> accounts : Полупроводка
+activate accounts
+accounts -> accounts : Конвертация полупроводки в модель заявки
+accounts -> DB : Поиск
+alt Найден
+    group #gray вар 1
+        alt #lightblue вариант 1.1
+            accounts -> DB : операция
+            alt #lightgreen Заявка найдена
+                DB -> accounts : операция
+                accounts -> DB : операцияи
+                DB -> accounts : Ответ
+            else Вариант 1.2
+                DB -> accounts : операция
+                accounts -> DB : операция
+                DB -> accounts : операция
+            end
+        else Идентификатор документа-основания пустой
+            accounts -> DB : операция
+            alt #lightgreen Заявка найдена
+                DB -> accounts : операция
+                accounts -> DB : операция
+                DB -> accounts : операция
+            else Заявка не найдена
+                DB -> accounts : операция
+                accounts -> DB : операция
+                DB -> accounts : операция
+            end
+        end
+    end
+else другой набор операций
+    accounts -> DB : 
+    DB -> accounts :
+end
+
+@enduml
