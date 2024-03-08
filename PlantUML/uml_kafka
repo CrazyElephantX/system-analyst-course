@@ -4,46 +4,31 @@ autonumber "<b>[00]"
 skinparam maxMessageSize 250
 
 participant "система банка" as FCCS
-queue "[Apache Kafka]" as Kafka
+
 box "ещё система"
-    participant "backend" as accounts
+    queue "[Apache Kafka]" as Kafka
+    participant "backend" as bd
     database "PostgreSQL" as DB
 end box
 
-FCCS -> Kafka : Полупроводка
-Kafka -> accounts : Полупроводка
-activate accounts
-accounts -> accounts : Конвертация полупроводки в модель заявки
-accounts -> DB : Поиск
-alt Найден
-    group #gray вар 1
-        alt #lightblue вариант 1.1
-            accounts -> DB : операция
-            alt #lightgreen Заявка найдена
-                DB -> accounts : операция
-                accounts -> DB : операцияи
-                DB -> accounts : Ответ
-            else Вариант 1.2
-                DB -> accounts : операция
-                accounts -> DB : операция
-                DB -> accounts : операция
-            end
-        else Идентификатор документа-основания пустой
-            accounts -> DB : операция
-            alt #lightgreen Заявка найдена
-                DB -> accounts : операция
-                accounts -> DB : операция
-                DB -> accounts : операция
-            else Заявка не найдена
-                DB -> accounts : операция
-                accounts -> DB : операция
-                DB -> accounts : операция
-            end
-        end
-    end
-else другой набор операций
-    accounts -> DB : 
-    DB -> accounts :
+FCCS -> Kafka: Запрос проверок \n prov
+Kafka <- bd : Запрос проверок
+bd -> DB : проверяте каки были проверки
+DB-->bd: ответ[]
+bd->bd: выполнение всех проверок
+alt
+    bd->DB: Записть результаты проверки
+else
+   break
+   bd-X DB: Ошибка результаты проверки
 end
+end
+== вар 1 == 
+bd->Kafka: результат проверок \n results
+
+
+FCCS -> Kafka: Запрос проверок \n results
+== вар 2 == 
+bd->FCCS: POST results
 
 @enduml
