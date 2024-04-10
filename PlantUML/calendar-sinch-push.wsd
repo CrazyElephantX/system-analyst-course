@@ -1,9 +1,12 @@
 @startuml calendar-sinch-push
 
+skinparam  {
+    Maxmessagesize 200
+}
+
 skinparam sequence {
     participantPadding 30
     MessageAlign center
-    Maxmessagesize 300
     roundcorner 10
 }
 
@@ -11,7 +14,7 @@ skinparam Legend {
     BackgroundColor white
     FontColor black
     BorderThickness 0
-    FontSize 10
+    FontSize 14
 }
 
 
@@ -19,23 +22,28 @@ autonumber
 title Календарь
 
 actor "user" as user order 10
+
 box "Static" #yellow
-    participant "calendar service" as cs order 30
+    participant "calendar servddice" as cs order 20
+    participant "cdddice" as css order 30
 endbox
 box "Rooms" #green
     participant "calendar integration service" as cis order 30
 endbox
 
-!$gc = "GET calendar"
+!$gc = "GET calendars"
 
 user->cs: $gc
 cs->cis: $gc
+cis->css: $gc
+css->ews: $gc
 
 legend left
-**Legend**
+**Legend** fgfdgrfg
 <#lightblue>|=Name |=Description |
-|Version| 1.0|
-|Autor| Burmistrov|
+|**Version**| 1.0|
+|**Autor**| Burmistrov|
+|**Data**| 10.04.24|
 endlegend
 
 @enduml
