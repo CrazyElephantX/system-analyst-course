@@ -1,0 +1,41 @@
+@startuml calendar-sinch-push
+
+skinparam sequence {
+    participantPadding 30
+    MessageAlign center
+    Maxmessagesize 300
+    roundcorner 10
+}
+
+skinparam Legend {
+    BackgroundColor white
+    FontColor black
+    BorderThickness 0
+    FontSize 10
+}
+
+
+autonumber
+title Календарь
+
+actor "user" as user order 10
+box "Static" #yellow
+    participant "calendar service" as cs order 30
+endbox
+box "Rooms" #green
+    participant "calendar integration service" as cis order 30
+endbox
+
+!$gc = "GET calendar"
+
+user->cs: $gc
+cs->cis: $gc
+
+legend left
+**Legend**
+<#lightblue>|=Name |=Description |
+|Version| 1.0|
+|Autor| Burmistrov|
+endlegend
+
+@enduml
