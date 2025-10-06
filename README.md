@@ -1,6 +1,8 @@
 # system-analyst-course
 ## Материалы
-- [Архитектура/architecture](https://github.com/CrazyElephantX/system-analyst-course/blob/main/Архитектура/architecture.md)
+- [Архитектура/architecture](../Архитектура/architecture.md)
+- [Личная база знаний или учет задач и заметок](../Личная база знаний или учет задач и заметок/base-task.md)
+
 
 # Инструменты
 - [Camunda](https://camunda.com/download/modeler)
