@@ -1,0 +1,103 @@
+# Требование: [Название функции]
+
+## 1. Назначение
+- Что именно нужно транспортировать?
+- Кто sender (кто инициирует событие)?
+- Кто receiver (кто получает)?
+
+## 2. Требования к задержке (Latency SLA)
+- Какая максимально допустимая задержка?
+  - Chat: 100-500мс OK
+  - Live trading: 50мс максимум
+  - Game: 16мс (для 60fps)
+  - Notifications: 1-5 сек OK
+  
+## 3. Частота событий
+- Сколько сообщений в секунду?
+- Per user или broadcast?
+  - Per user: сколько активных пользователей?
+  - Broadcast: сколько слушателей?
+
+## 4. Объём данных
+- Размер одного сообщения? (bytes)
+- Total traffic estimate per hour?
+
+## 5. Надёжность (Reliability SLA)
+- Можно ли потерять сообщение?
+- Нужна ли гарантия delivery?
+- Если соединение разорвалось, нужно ли resend?
+
+## 6. Авторизация & Безопасность
+- Нужна ли авторизация при подключении?
+- Какие permission checks?
+- Нужно ли шифрование (WSS vs WS)?
+
+## 7. Масштабируемость
+- Сколько максимум одновременных соединений?
+- Expected growth в течение года?
+- Нужна ли горизонтальная масштабируемость?
+
+## 8. API Contract
+- Структура сообщения (JSON schema)?
+- Типы событий?
+- Обработка ошибок?
+
+## 9. Persistence
+- Нужно ли сохранять историю сообщений?
+- Если юзер был offline, нужны ли missed events?
+
+## 10. Мониторинг & Observability
+- Какие метрики важны?
+  - Active connections
+  - Messages per second
+  - Average latency
+  - Error rate
+- Какие alerts нужны?
+
+
+# ПРИМЕР ЗАПОЛНЕННОГО ШАБЛОНА: Live Chat
+Требование: Live Chat Messages
+
+## 1. Назначение
+- Sender: пользователь, написавший сообщение в чате
+- Receiver: все участники этого чата
+- Событие: новое текстовое сообщение
+
+## 2. Требования к задержке
+- Latency SLA: ≤ 500мс (99th percentile)
+
+## 3. Частота событий
+- Assume average user: 5 сообщений в минуту = 0.08 msg/sec
+- Active users per chat: 20-50
+- Broadcast scope: конкретный чат (не всем пользователям)
+
+## 4. Объём данных
+- Message structure: { userId, username, text, timestamp } ≈ 500 bytes
+- Per chat: 20 users * 0.08 msg/sec * 500 bytes = 800 bytes/sec = 2.8 MB/hour
+
+## 5. Надёжность
+- Отдельные сообщения можно потерять (ok)
+- НО: если соединение разорвалось, при reconnect отправить last 50 messages
+- At least once delivery: нет (best effort)
+
+## 6. Авторизация & Безопасность
+- WSS (encrypted)
+- Auth token в URL или в handshake headers
+- Permission check: user must be member of chat
+
+## 7. Масштабируемость
+- 10k active chats concurrently
+- ≤ 100k WebSocket connections peak
+- Need horizontal scaling (Redis pub/sub для inter-server communication)
+
+## 8. API Contract
+```json
+{
+  "type": "message",
+  "chatId": "uuid",
+  "userId": "uuid",
+  "username": "string",
+  "text": "string",
+  "timestamp": "ISO8601",
+  "id": "uuid"  // для dedupe
+}```
